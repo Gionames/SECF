@@ -9,7 +9,7 @@
 #   relay_id, relay_pin, relay_name, relay_mode_id, relay_mode_name, pulse_id, pulse_name
 #   input_id, input_pin, input_name
 #
-# Punti di aggancio per chi comanda altro che il relè (es. luci Wiz). ESPHome non sa sostituire una lista:
+# Punti di aggancio per chi comanda altro che il relè (es. luci con comando proprio). ESPHome non sa sostituire una lista:
 # si aggiunge con !extend (le liste si accodano) e si spegne il comportamento di base con un interruttore.
 #   global input_to_relay${n}        true = l'ingresso comanda il relè (default); chi comanda altro lo porta a false
 #                                    con !extend (initial_value) e aggiunge la sua azione a input_action${n}
@@ -19,7 +19,7 @@
 #                                    viene fermato al rilascio del tasto
 #   binary_sensor input_fast${n}     (interno) se vero, con "Al rilascio" il comando parte comunque subito;
 #                                    di base falso, si sostituisce con !extend della sua lambda
-# sim_hold${n} tiene il tasto simulato premuto finché input_longpress_hook${n} sta girando (max 30 s).
+# global sim_press${n}: se vero l'ingresso risulta premuto (simulazione). Il pulsante "Simula pressione lunga" non è nella base: sta in input.yaml del ramo Wiz.
 #
 # Test: l'ordine dei fronti e il comportamento delle 5 modalità vanno provati su un device reale.
 #
@@ -101,20 +101,6 @@ script:
     mode: restart
     then:
       - delay: 0ms
-
-  # simula il tasto tenuto premuto: lo rilascia subito dopo la soglia, a meno che l'azione della pressione lunga
-  # (input_longpress_hook, per esempio una rampa) stia ancora girando: allora aspetta che finisca (limite 30 s)
-  - id: sim_hold${n}
-    mode: single
-    then:
-      - lambda: 'id(sim_press${n}) = true;'
-      - delay: !lambda 'return (uint32_t) (id(lp_threshold${n}).state * 1000.0f) + 300;'
-      - wait_until:
-          condition:
-            not:
-              script.is_running: input_longpress_hook${n}
-          timeout: 30s
-      - lambda: 'id(sim_press${n}) = false;'
 
   # pressione lunga (solo modalità a pulsante): scatta alla soglia, senza aspettare il rilascio
   - id: longpress_wait${n}
@@ -219,23 +205,6 @@ number:
     restore_value: true
     initial_value: ${input_debounce_ms}
 
-button:
-  - platform: template
-    name: "Simula pressione lunga${label}"
-    id: sim_btn${n}
-    icon: mdi:gesture-tap-hold
-    entity_category: config
-    on_press:
-      # secondo tocco mentre sta "premendo": rilascia subito
-      - if:
-          condition:
-            script.is_running: sim_hold${n}
-          then:
-            - script.stop: sim_hold${n}
-            - lambda: 'id(sim_press${n}) = false;'
-          else:
-            - script.execute: sim_hold${n}
-
 event:
   - platform: template
     name: "Ingresso${label}"
@@ -274,7 +243,7 @@ binary_sensor:
     filters:
       - delayed_on_off: !lambda 'return (uint32_t) id(input_debounce${n}).state;'
 
-  # vero = con "Al rilascio" il comando parte subito (es. failsafe Wiz); di base falso, la lambda si sostituisce con !extend
+  # vero = con "Al rilascio" il comando parte subito (es. un modulo con un suo failsafe); di base falso, la lambda si sostituisce con !extend
   - platform: template
     id: input_fast${n}
     internal: true

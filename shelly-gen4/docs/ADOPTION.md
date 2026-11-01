@@ -82,7 +82,7 @@ substitutions:
   friendly_name: Shelly 1 Gen4
 
 packages:
-  gionames.shelly-1-gen4: github://Gionames/SECF/shelly-gen4/configs/shelly-1-gen4.yaml@gen4-v1.0.10
+  gionames.shelly-1-gen4: github://Gionames/SECF/shelly-gen4/configs/shelly-1-gen4.yaml@gen4-v1.0.11
 
 esphome:
   name: ${name}
@@ -94,13 +94,13 @@ api:
     key: ...
 ```
 
-The stub is a reference, not a copy. Every build fetches this repository's config from the release tag written in the stub (`gen4-v1.0.10` here) and merges your stub on top. The stub is also where customization lives; see [Customizing](CUSTOMIZING.md).
+The stub is a reference, not a copy. Every build fetches this repository's config from the release tag written in the stub (`gen4-v1.0.11` here) and merges your stub on top. The stub is also where customization lives; see [Customizing](CUSTOMIZING.md).
 
 ## The update channel
 
 That package reference is the update channel. Improvements pushed here reach your device the next time you hit Install, with nothing to edit on your side (package fetches are cached for up to a day).
 
-The reference is a release **tag**, not a branch. A branch can be served stale from the Builder's package cache (this is what once made an adoption install 1.0.2 over a 1.0.9 conversion); a tag always means the same files. To move a device to a newer release, change the tag in the stub (for example `gen4-v1.0.10` to the next one) and hit Install. If you ever need a branch, add `refresh: always` to that package entry.
+The reference is a release **tag**, not a branch. A branch can be served stale from the Builder's package cache (this is what once made an adoption install 1.0.2 over a 1.0.9 conversion); a tag always means the same files. To move a device to a newer release, change the tag in the stub (for example `gen4-v1.0.11` to the next one) and hit Install. If you ever need a branch, add `refresh: always` to that package entry.
 
 ## Factory reset
 

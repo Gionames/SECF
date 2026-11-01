@@ -9,6 +9,13 @@ a rebuild that only bumps the version string is easy to tell apart from a real c
 
 ---
 
+## [1.0.11] - 2026-11-01
+
+- La base comanda da sola luci on/off con il relè e l'ingresso, senza nulla di legato alle Wiz: il pulsante "Simula pressione lunga" e il suo script escono dalla base e passano in `input.yaml` del ramo `modulare-secf` (repo esphome-shelly-wiz-physical-failsafe), che richiede da questa versione in poi la base 1.0.11.
+- Resta nella base la pressione lunga generica (durata, "Nessuna azione" o evento a Home Assistant), perché serve anche a chi non usa le Wiz.
+- Nessun cambiamento a bootloader, partizioni, GPIO o applicazione di avvio: toolchain invariata (ESPHome 2026.8.2 / ESP-IDF 5.5.5).
+- Chi usa solo la base perde il pulsante di simulazione: per provare la pressione lunga da Home Assistant serve il modulo input.
+
 ## [1.0.10] - 2026-11-01
 
 - Il progetto si sposta nella repo SECF (Shelly-to-ESPHome conversion files). Solo i file di conversione stanno qui; i moduli Wiz restano nella repo principale.

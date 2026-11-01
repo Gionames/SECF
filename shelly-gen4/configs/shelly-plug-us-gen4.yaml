@@ -62,7 +62,7 @@ esphome:
 # converted devices broadcast this URL. The ESPHome dashboard can offer adoption.
 # false keeps adopted stubs as references, every rebuild pulls updates from this repo.
 dashboard_import:
-  package_import_url: github://Gionames/SECF/shelly-gen4/configs/shelly-plug-us-gen4.yaml@gen4-v1.0.10
+  package_import_url: github://Gionames/SECF/shelly-gen4/configs/shelly-plug-us-gen4.yaml@gen4-v1.0.11
   import_full_config: false
 
 # In Momentary mode the relay turns itself back off after the selected pulse.
