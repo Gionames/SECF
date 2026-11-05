@@ -67,8 +67,9 @@ web_server:
 # bluetooth_proxy, the "Bluetooth Proxy" switch (id bluetooth_proxy_switch) and the wifi on_connect/on_disconnect
 # scan triggers, e.g. packages/ble.yaml of Gionames/esphome-shelly-wiz-physical-failsafe (branch modulare-secf)
 
-# free memory sensors below
+# free memory sensors below (update every 30 s); names are the ones used on every device, so stubs do not redeclare them
 debug:
+  update_interval: 30s
 
 # firmware version on the device page; off by default in Home Assistant, whose device info already shows the project version
 text_sensor:
@@ -94,10 +95,13 @@ sensor:
   - platform: debug
     id: sensor_debug
     free:
-      name: "Free Memory"
+      name: "Heap libero"
       entity_category: diagnostic
     block:
-      name: "Largest Free Memory Block"
+      name: "Heap blocco massimo"
+      entity_category: diagnostic
+    loop_time:
+      name: "Loop time"
       entity_category: diagnostic
 
 button:
