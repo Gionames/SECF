@@ -26,7 +26,7 @@ esphome:
   name_add_mac_suffix: true
   project:
     name: gionames.${device_name}
-    version: "1.0.11"
+    version: "1.0.12"
 
 esp32:
   board: esp32-c6-devkitm-1
@@ -43,17 +43,6 @@ esp32:
 # fallback hotspot + captive portal for first boot and whenever Wi-Fi is unreachable
 wifi:
   ap:
-  # the Bluetooth scan only runs while Wi-Fi is connected. a continuous scan starves the
-  # hotspot, and joining it fails as if the password were wrong
-  on_connect:
-    - if:
-        condition:
-          switch.is_on: bluetooth_proxy_switch
-        then:
-          - esp32_ble_tracker.start_scan:
-              continuous: true
-  on_disconnect:
-    - esp32_ble_tracker.stop_scan:
 
 captive_portal:
 
@@ -74,50 +63,13 @@ web_server:
   port: 80
   version: 2
 
-# Bluetooth proxy for Home Assistant; active allows connections, not just advertisements
-esp32_ble_tracker:
-  id: ble_tracker
-  scan_parameters:
-    active: true
-    continuous: false
+# Bluetooth: not part of the base. Add it with a package that defines esp32_ble_tracker (id ble_tracker),
+# bluetooth_proxy, the "Bluetooth Proxy" switch (id bluetooth_proxy_switch) and the wifi on_connect/on_disconnect
+# scan triggers, e.g. packages/ble.yaml of Gionames/esphome-shelly-wiz-physical-failsafe (branch modulare-secf)
 
-bluetooth_proxy:
-  active: true
-
-# turns the Bluetooth radio off at runtime. to drop the proxy entirely, !remove both
-# components above, this switch (- id: !remove bluetooth_proxy_switch), and wifi's
-# on_connect and on_disconnect
-switch:
-  - platform: template
-    name: "Bluetooth Proxy"
-    id: bluetooth_proxy_switch
-    icon: mdi:bluetooth
-    entity_category: config
-    optimistic: true
-    restore_mode: RESTORE_DEFAULT_ON
-    # the scan must be fully stopped before the radio goes down, or the scanner is left
-    # stuck mid-stop and never restarts after ble.enable
-    turn_on_action:
-      - ble.enable:
-      - wait_until:
-          condition: ble.enabled
-          timeout: 5s
-      - delay: 100ms
-      - if:
-          condition: wifi.connected
-          then:
-            - esp32_ble_tracker.start_scan:
-                continuous: true
-    turn_off_action:
-      - esp32_ble_tracker.stop_scan:
-      - wait_until:
-          condition:
-            lambda: 'return id(ble_tracker)->get_scanner_state() == esp32_ble_tracker::ScannerState::IDLE;'
-          timeout: 2s
-      - ble.disable:
-
-# free memory sensors below; the proxy is the largest memory user
+# free memory sensors below (update every 30 s); names are the ones used on every device, so stubs do not redeclare them
 debug:
+  update_interval: 30s
 
 # firmware version on the device page; off by default in Home Assistant, whose device info already shows the project version
 text_sensor:
@@ -143,10 +95,13 @@ sensor:
   - platform: debug
     id: sensor_debug
     free:
-      name: "Free Memory"
+      name: "Heap libero"
       entity_category: diagnostic
     block:
-      name: "Largest Free Memory Block"
+      name: "Heap blocco massimo"
+      entity_category: diagnostic
+    loop_time:
+      name: "Loop time"
       entity_category: diagnostic
 
 button:
@@ -164,7 +119,7 @@ external_components:
   - source:
       type: git
       url: https://github.com/Gionames/SECF
-      ref: gen4-v1.0.11
+      ref: gen4-v1.0.12
       path: shelly-gen4/components
     components: [shelly_gen4_partition]
     refresh: 1d

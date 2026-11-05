@@ -9,6 +9,15 @@ a rebuild that only bumps the version string is easy to tell apart from a real c
 
 ---
 
+## [1.0.12] - 2026-11-05
+
+- Il Bluetooth esce dalla base: spariscono `esp32_ble_tracker`, `bluetooth_proxy`, l'interruttore "Bluetooth Proxy" e i trigger Wi-Fi che avviano e fermano la scansione. Il proxy BLE diventa un pacchetto opzionale, `packages/ble.yaml` del ramo `modulare-secf` (repo esphome-shelly-wiz-physical-failsafe), passivo e con l'interruttore "Bluetooth BLE proxy passivo".
+- Sensori di memoria nella base ridenominati e aggiornati ogni 30 s: "Heap libero", "Heap blocco massimo" e nuovo "Loop time" (tutti diagnostici). I blocchi `debug:`/`sensor:` duplicati negli stub vanno tolti, perché la piattaforma debug ammette un solo gestore per dispositivo.
+- **Gli stub esistenti vanno modificati, non solo ricompilati**: passando alla 1.0.12 senza il pacchetto `ble.yaml` il dispositivo perde il BLE.
+- Gli zip di conversione di questa versione non includono più il BLE.
+- Nessun cambiamento a bootloader, partizioni, GPIO o applicazione di avvio.
+- Modelli interessati: tutti (tag in `package_import_url`).
+
 ## [1.0.11] - 2026-11-01
 
 - La base comanda da sola luci on/off con il relè e l'ingresso, senza nulla di legato alle Wiz: il pulsante "Simula pressione lunga" e il suo script escono dalla base e passano in `input.yaml` del ramo `modulare-secf` (repo esphome-shelly-wiz-physical-failsafe), che richiede da questa versione in poi la base 1.0.11.
