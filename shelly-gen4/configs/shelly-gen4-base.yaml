@@ -26,7 +26,7 @@ esphome:
   name_add_mac_suffix: true
   project:
     name: gionames.${device_name}
-    version: "1.0.11"
+    version: "1.0.12"
 
 esp32:
   board: esp32-c6-devkitm-1
@@ -119,7 +119,7 @@ external_components:
   - source:
       type: git
       url: https://github.com/Gionames/SECF
-      ref: gen4-v1.0.11
+      ref: gen4-v1.0.12
       path: shelly-gen4/components
     components: [shelly_gen4_partition]
     refresh: 1d
